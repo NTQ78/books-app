@@ -1,0 +1,53 @@
+version: "3.9"
+
+services:
+  fastapi:
+    build: .
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+  
+    environment:
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - SQL_SERVER_HOST=${SQL_SERVER_HOST}
+      - SQL_SERVER_DB=${SQL_SERVER_DB}
+      - SQL_SERVER_USER=${SQL_SERVER_USER}
+      - SQL_SERVER_PASSWORD=${SQL_SERVER_PASSWORD}
+      - SQL_SERVER_PORT=${SQL_SERVER_PORT}
+      - SECRET_KEY=${SECRET_KEY}
+
+  celery_worker:
+    build: .
+    container_name: celery_worker
+    command: celery -A celery_temp.celery_worker.celery_app worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+    
+    environment:
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - SQL_SERVER_HOST=${SQL_SERVER_HOST}
+      - SQL_SERVER_DB=${SQL_SERVER_DB}
+      - SQL_SERVER_USER=${SQL_SERVER_USER}
+      - SQL_SERVER_PASSWORD=${SQL_SERVER_PASSWORD}
+      - SQL_SERVER_PORT=${SQL_SERVER_PORT}
+      - SECRET_KEY=${SECRET_KEY}
+ 
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+ 
+volumes:
+  mysql_data:
