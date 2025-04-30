@@ -84,7 +84,7 @@ npx expo start
 ---
 
 ## Screenshots
-_Add screenshots of your UI here._
+
 
 ---
 
