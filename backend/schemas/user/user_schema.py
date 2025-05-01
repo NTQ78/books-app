@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional, List, Dict, Any
+from schemas.profile.profile_schema import ProfileBase
 
 
 class UserBase(BaseModel):
@@ -22,8 +23,9 @@ class UserCreate(UserBase):
 class UserUpdate(UserBase):
     username: Optional[str] = None
     email: Optional[str] = None
-    isAdmin: Optional[bool] = None
+
     password: Optional[str] = None
+    profile: Optional[ProfileBase] = None
 
 
 class UserLogin(BaseModel):
@@ -39,7 +41,7 @@ class UserResponse(UserBase):
     username: str
     email: str
     isAdmin: bool = False
-    profile_Image: str = "default.jpg"
+    profile_Image: str
 
     class Config:
         from_attributes = True

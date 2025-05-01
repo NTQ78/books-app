@@ -1,7 +1,7 @@
 from database.mysql import Base
-from models.user.model import User
-from models.book.model import Book
-from models.profile.model import Profile
+from models.user.user_model import User
+from models.book.book_model import Book
+from models.profile.profile_model import Profile
 
 
 def create_all_tables(engine):

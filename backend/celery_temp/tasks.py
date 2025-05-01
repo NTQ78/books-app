@@ -1,9 +1,9 @@
 from celery_temp.celery_worker import celery_app
 from services.cloudinary import upload_image, delete_image
 from database.mysql import SessionLocal
-from models.book.model import Book
-from models.user.model import User
-from models.profile.model import Profile
+from models.book.book_model import Book
+from models.user.user_model import User
+from models.profile.profile_model import Profile
 
 
 def get_db():

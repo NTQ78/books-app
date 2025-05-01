@@ -14,7 +14,7 @@ class Profile(Base):
         unique=True,
     )
     isAdmin = Column(Boolean, default=False)
-    profile_Image = Column(String(255), default="default.jpg")
+    profile_Image = Column(String(255))
     isAuthor = Column(Boolean, default=False)
     create_At = Column(DateTime, default=datetime.utcnow)
     user = relationship("User", back_populates="profile", uselist=False)

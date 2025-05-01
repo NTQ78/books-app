@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean
 
 from database.mysql import Base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Session
 import uuid
 
 
