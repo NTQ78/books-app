@@ -8,7 +8,7 @@ from middleware.auth import (
     verify_password,
     create_access_token,
     decode_access_token,
-    check_Admin,
+    check_admin,
 )
 
 
@@ -64,8 +64,8 @@ class UserService:
 
     def get_all_users(self, credentials):
         try:
-            is_admin = check_Admin(credentials.credentials)
-            if is_admin is None:
+            is_admin = check_admin(credentials.credentials)
+            if not is_admin:
                 return api_response(
                     status_code=401,
                     error="Invalid token",
@@ -158,7 +158,7 @@ class UserService:
                         error="Email already exists",
                         message="Email already exists, please use another email",
                     )
-            # GET OBJECT FROM BODY
+
             for key, value in body.dict(exclude_unset=True).items():
                 if key == "profile":
                     continue

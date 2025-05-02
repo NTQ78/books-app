@@ -40,13 +40,9 @@ def decode_access_token(token: str):
         return None
 
 
-def check_Admin(token: str):
+def check_admin(token: str) -> bool:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-
-        isAdmin = payload.get("isAdmin")
-        if isAdmin is None:
-            return None
-        return isAdmin
+        return bool(payload.get("isAdmin"))
     except JWTError:
-        return None
+        return False

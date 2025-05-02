@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native';
 import { Link } from 'expo-router';
-export default function HomeScreen() {
+export default function SettingScreen() {
   return (
     <View
       style={{
@@ -19,7 +19,7 @@ export default function HomeScreen() {
       >
         Home
       </Text>
-      <Link href="/">View details</Link>
+      <Link href="/settings">View details</Link>
     </View>
   );
 }
