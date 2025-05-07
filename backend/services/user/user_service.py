@@ -1,7 +1,7 @@
 from fastapi import UploadFile, File
 from models.user.user_model import User
 from models.profile.profile_model import Profile
-from services.response import api_response
+from utils.response import api_response
 from celery_temp.tasks import update_profile_image
 from middleware.auth import (
     get_password_hash,

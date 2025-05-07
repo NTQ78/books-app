@@ -5,7 +5,7 @@ from routes.user.user_route import router as user_router
 from routes.book.book_route import router as book_router
 from database.mysql import engine
 from models import create_all_tables
-from services.exception_handlers import register_exception_handlers
+from middleware.exception_handlers import register_exception_handlers
 
 app = FastAPI()
 # Register exception handlers

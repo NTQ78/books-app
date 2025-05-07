@@ -1,5 +1,5 @@
 from celery_temp.celery_worker import celery_app
-from services.cloudinary import upload_image, delete_image
+from utils.cloudinary import upload_image, delete_image
 from database.mysql import SessionLocal
 from models.book.book_model import Book
 from models.user.user_model import User

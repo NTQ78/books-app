@@ -1,5 +1,5 @@
 from models.book.book_model import Book
-from services.response import api_response
+from utils.response import api_response
 from celery_temp.tasks import upload_image_and_update_book
 from sqlalchemy.orm import Session
 from middleware.auth import decode_access_token

@@ -10,17 +10,15 @@ from fastapi import (
 )
 
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from services.response import api_response
-from services.cloudinary import upload_image
+
 
 from sqlalchemy.orm import Session
 from database.mysql import SessionLocal
-from models.book.book_model import Book
+
 
 from schemas.book.book_schema import BookCreate, BookUpdate, BookResponse
 
 
-from celery_temp.tasks import upload_image_and_update_book
 from services.book.book_service import BookService
 
 router = APIRouter(prefix="/products", tags=["Books API"])
