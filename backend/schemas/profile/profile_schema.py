@@ -4,8 +4,8 @@ from typing import Optional, List, Dict, Any
 
 
 class ProfileBase(BaseModel):
-    isAdmin: Optional[bool] = False
-    isAuthor: Optional[bool] = False
+    isAdmin: bool = False
+    isAuthor: bool = False
 
     class Config:
         from_attributes = True
