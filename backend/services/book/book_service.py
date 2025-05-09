@@ -91,6 +91,8 @@ class BookService:
             if image:
                 file_bytes = await image.read()
                 upload_image_and_update_book.delay(new_book.id, file_bytes)
-            return api_response(data=new_book.to_dict())
+            return api_response(
+                data=new_book.to_dict(), message="Book created successfully"
+            )
         except Exception as e:
             return api_response(error=str(e))
