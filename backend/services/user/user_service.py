@@ -16,7 +16,7 @@ class UserService:
     def __init__(self, db):
         self.db = db
 
-    def login(self, user: User):
+    def login(self, user):
         try:
             db_user = self.db.query(User).filter(User.email == user.email).first()
 
@@ -39,27 +39,30 @@ class UserService:
         except Exception as e:
             return api_response(status_code=500, error=str(e))
 
-    def create_user(self, user: User):
+    def create_user(self, user):
         try:
-            db_user = self.db.query(User).filter(User.email == user.email).first()
-            if db_user:
+            if self.db.query(User).filter(User.email == user.email).first():
                 return api_response(status_code=400, error="User already exists")
+
+            hashed_password = get_password_hash(user.password)
             new_user = User(
                 username=user.username,
                 email=user.email,
-                password=get_password_hash(user.password),
+                password=hashed_password,
             )
             self.db.add(new_user)
-            self.db.commit()
-            self.db.refresh(new_user)
+            self.db.flush()  # Ensure new_user.id is available
 
             new_profile = Profile(profile_id=new_user.id)
             self.db.add(new_profile)
             self.db.commit()
-            self.db.refresh(new_profile)
-            user_dict = new_user.to_dict()
-            return api_response(data=user_dict, message="User created successfully")
+            self.db.refresh(new_user)
+
+            return api_response(
+                data=new_user.to_dict(), message="User created successfully"
+            )
         except Exception as e:
+            self.db.rollback()
             return api_response(status_code=500, error=str(e))
 
     def get_all_users(self, credentials):
@@ -128,6 +131,7 @@ class UserService:
 
             return api_response(message="Image updated successfully")
         except Exception as e:
+            self.db.rollback()
             return api_response(status_code=500, error=str(e))
         finally:
             self.db.close()
@@ -165,17 +169,19 @@ class UserService:
                 if hasattr(user, key) and value is not None:
                     setattr(user, key, value)
 
-            if body.profile:
+            if body.profile is not None:
                 for key, value in body.profile.dict(exclude_unset=True).items():
                     if hasattr(user.profile, key) and value is not None:
                         setattr(user.profile, key, value)
 
             self.db.commit()
             self.db.refresh(user)
-            user_dict = user.to_dict()
 
-            return api_response(message="User updated successfully", data=user_dict)
+            return api_response(
+                message="User updated successfully", data=user.to_dict()
+            )
         except Exception as e:
+            self.db.rollback()
             return api_response(status_code=500, error=str(e))
         finally:
             self.db.close()
@@ -189,6 +195,7 @@ class UserService:
             self.db.commit()
             return api_response(message="User deleted successfully")
         except Exception as e:
+            self.db.rollback()
             return api_response(status_code=500, error=str(e))
         finally:
             self.db.close()

@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from pydantic.config import ConfigDict
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 from schemas.profile.profile_schema import ProfileBase
@@ -10,8 +11,7 @@ class UserBase(BaseModel):
     email: str
     password: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserCreate(UserBase):
@@ -32,8 +32,7 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserResponse(UserBase):
@@ -43,5 +42,4 @@ class UserResponse(UserBase):
     isAdmin: bool = False
     profile_Image: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

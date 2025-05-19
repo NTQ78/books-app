@@ -2,7 +2,9 @@ from celery_temp.celery_worker import celery_app
 from utils.cloudinary import upload_image, delete_image
 from database.mysql import SessionLocal
 from models.book.book_model import Book
-from models.user.user_model import User
+from loguru import logger
+
+# from models.user.user_model import User
 from models.profile.profile_model import Profile
 
 
@@ -16,9 +18,6 @@ def get_db():
 
 @celery_app.task
 def upload_image_and_update_book(book_id, image_bytes):
-    import logging
-
-    logger = logging.getLogger(__name__)
     try:
         url = upload_image(image_bytes)
         db = SessionLocal()
@@ -26,7 +25,7 @@ def upload_image_and_update_book(book_id, image_bytes):
         if book:
             book.cover_image = url if url else None
             db.commit()
-            logger.info(f"Book {book_id} updated with new cover image.")
+            logger.success(f"Book {book_id} updated with new cover image.")
         else:
             logger.warning(f"Book {book_id} not found.")
     except Exception as e:
@@ -37,9 +36,6 @@ def upload_image_and_update_book(book_id, image_bytes):
 
 @celery_app.task
 def update_profile_image(user_id, image_bytes):
-    import logging
-
-    logger = logging.getLogger(__name__)
     db = SessionLocal()
     try:
         profile = db.query(Profile).filter(Profile.profile_id == user_id).first()
@@ -48,7 +44,7 @@ def update_profile_image(user_id, image_bytes):
             return
 
         old_image = profile.profile_Image
-        if old_image:
+        if old_image is not None:
             delete_image(old_image)
             logger.info(f"Old profile image deleted!")
 
@@ -56,7 +52,7 @@ def update_profile_image(user_id, image_bytes):
         profile.profile_Image = url
         db.commit()
         db.refresh(profile)
-        logger.info(f"Profile {user_id} updated with new image.")
+        logger.success(f"Profile {user_id} updated with new image.")
     except Exception as e:
         logger.error(f"Error updating profile image for user {user_id}: {e}")
     finally:

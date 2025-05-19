@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from pydantic.config import ConfigDict
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 from fastapi import Form, File, UploadFile
@@ -10,8 +11,7 @@ class BookBase(BaseModel):
     caption: str
     summary: str
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class BookCreate(BookBase):
@@ -46,5 +46,4 @@ class BookResponse(BookBase):
     user_id: str
     create_At: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)

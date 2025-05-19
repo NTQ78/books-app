@@ -95,4 +95,5 @@ class BookService:
                 data=new_book.to_dict(), message="Book created successfully"
             )
         except Exception as e:
+            self.db.rollback()
             return api_response(error=str(e))
