@@ -5,6 +5,10 @@ from sqlalchemy.orm import Session
 from middleware.auth import decode_access_token
 
 
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg"]
+
+
 class BookService:
     def __init__(self, db: Session):
         self.db = db
@@ -59,7 +63,7 @@ class BookService:
 
     async def create_book(self, book, image, credentials):
         try:
-            token = credentials.credentials
+            token = getattr(credentials, "credentials", None)
             if not token:
                 return api_response(
                     status_code=401,
@@ -75,25 +79,35 @@ class BookService:
                     message="Please login to upload Books",
                 )
 
-            cover_image_url = None
-
             new_book = Book(
                 title=book.title,
                 author=book.author,
                 caption=book.caption,
                 summary=book.summary,
-                cover_image=cover_image_url,
+                cover_image=None,
                 user_id=user_id,
             )
             self.db.add(new_book)
             self.db.commit()
             self.db.refresh(new_book)
+
             if image:
+                if image.content_type not in ALLOWED_IMAGE_TYPES:
+                    return api_response(
+                        status_code=400,
+                        error="Invalid file type",
+                        message="Only JPEG and PNG files are allowed",
+                    )
                 file_bytes = await image.read()
+                if len(file_bytes) > MAX_FILE_SIZE:
+                    return api_response(
+                        status_code=400,
+                        error="File size exceeds the limit",
+                        message="File size should be less than 5MB",
+                    )
                 upload_image_and_update_book.delay(new_book.id, file_bytes)
-            return api_response(
-                data=new_book.to_dict(), message="Book created successfully"
-            )
+
+            return api_response(message="Book created successfully")
         except Exception as e:
             self.db.rollback()
             return api_response(error=str(e))
