@@ -19,7 +19,7 @@ def register_exception_handlers(app):
     ):
         return JSONResponse(
             status_code=422,
-            content=api_response(status_code=422, error=exc.errors()),
+            content=api_response(status_code=422, error=str(exc)),
         )
 
     @app.exception_handler(Exception)

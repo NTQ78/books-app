@@ -11,9 +11,6 @@ from middleware.auth import (
     check_admin,
 )
 
-MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
-ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg"]
-
 
 class UserService:
     def __init__(self, db):
@@ -131,31 +128,12 @@ class UserService:
             if not file:
                 return api_response(status_code=400, error="File is required")
 
-            if file.content_type not in ALLOWED_IMAGE_TYPES:
-                return api_response(
-                    status_code=400,
-                    error="Invalid file type",
-                    message="Allowed file types are: jpeg, png, jpg",
-                )
-
             file_bytes = await file.read()
             if not file_bytes:
                 return api_response(status_code=400, error="Empty file uploaded")
-            if len(file_bytes) > MAX_FILE_SIZE:
-                return api_response(
-                    status_code=400,
-                    error="File size exceeds limit",
-                    message="File size should be less than 5MB",
-                )
-
-            user = self.db.query(User).filter(User.id == user_id).first()
-            if not user:
-                return api_response(status_code=404, error="User not found")
 
             update_profile_image.delay(user_id, file_bytes)
-            return api_response(
-                message=f"Image updated successfully for {user.username}"
-            )
+            return api_response(message=f"Image updated successfully")
         except Exception as e:
             self.db.rollback()
             return api_response(status_code=500, error=str(e))
