@@ -12,12 +12,12 @@ def my_sink(message):
     record = message.record
     level = record["level"].name
     color_map = {
-        "DEBUG": "\033[94m",  # Blue
-        "INFO": "\033[92m",  # Green
-        "WARNING": "\033[93m",  # Yellow
-        "ERROR": "\033[91m",  # Red
+        "DEBUG": "\033[94m",
+        "INFO": "\033[92m",
+        "WARNING": "\033[93m",
+        "ERROR": "\033[91m",
         "CRITICAL": "\033[1;91m",
-        "SUCCESS": "\033[92m",  # Green
+        "SUCCESS": "\033[92m",
     }
     reset = "\033[0m"
     colored = f"{color_map.get(level, '')}{record['message']}{reset}"
