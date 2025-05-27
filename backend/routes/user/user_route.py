@@ -14,6 +14,7 @@ from schemas.user.user_schema import (
     UserUpdate,
 )
 from services.user.user_service import UserService
+from repositories.sqlalchemy.user_repo_sqlalchemy import UserRepoSqlAlchemy
 
 
 router = APIRouter(prefix="/users", tags=["Users API"])
@@ -31,14 +32,16 @@ def get_db():
 # SIGN IN
 @router.post("/login")
 def login(user: UserLogin, db: Session = Depends(get_db)):
-    user_service = UserService(db)
+    repo = UserRepoSqlAlchemy(db)
+    user_service = UserService(repo)
     return user_service.login(user)
 
 
 # SIGN UP
 @router.post("/create")
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    user_service = UserService(db)
+    repo = UserRepoSqlAlchemy(db)
+    user_service = UserService(repo)
     return user_service.create_user(user)
 
 
@@ -48,7 +51,8 @@ def get_all_users(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ):
-    user_service = UserService(db)
+    repo = UserRepoSqlAlchemy(db)
+    user_service = UserService(repo)
     return user_service.get_all_users(credentials)
 
 
@@ -58,14 +62,16 @@ def get_profile(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ):
-    user_service = UserService(db)
+    repo = UserRepoSqlAlchemy(db)
+    user_service = UserService(repo)
     return user_service.get_profile(credentials)
 
 
 # GET USER BY ID
 @router.get("/{user_id}")
 def get_user_by_id(user_id: str, db: Session = Depends(get_db)):
-    user_service = UserService(db)
+    repo = UserRepoSqlAlchemy(db)
+    user_service = UserService(repo)
     return user_service.get_user_by_id(user_id)
 
 
@@ -76,7 +82,8 @@ async def update_user_image(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
 ):
-    user_service = UserService(db)
+    repo = UserRepoSqlAlchemy(db)
+    user_service = UserService(repo)
     return await user_service.update_user_image(user_id, file)
 
 
@@ -87,12 +94,14 @@ async def update_user(
     credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ):
-    user_service = UserService(db)
+    repo = UserRepoSqlAlchemy(db)
+    user_service = UserService(repo)
     return user_service.update_user(body, credentials)
 
 
 # DELETE USER
 @router.delete("/{user_id}")
 def delete_user(user_id: str, db: Session = Depends(get_db)):
-    user_service = UserService(db)
+    repo = UserRepoSqlAlchemy(db)
+    user_service = UserService(repo)
     return user_service.delete_user(user_id)
