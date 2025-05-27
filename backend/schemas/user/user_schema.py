@@ -27,8 +27,7 @@ class UserUpdate(BaseModel):
     password: Optional[str] = None
     profile: Optional[ProfileBase] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class UserLogin(BaseModel):
